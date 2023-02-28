@@ -7,7 +7,7 @@ link = mysql.connector.connect(
     user='root',
     password =""
 )
-print("SALUTTTTTT")
+
 
 
 #csv.read('data/rna_import_20221102_dpt_01;csv'), 'r'
