@@ -29,27 +29,29 @@ def assos():
     datas = Data.query.limit(30).all()
     return render_template('assos.html', datas=datas)
 
+@app.route('/ajouter', methods=['GET', 'POST'])
+def ajouter():
+    if request.method == 'POST':
+        rna_id = request.form['rna_id']
+        rna_id_ex = request.form['rna_id_ex']
+        gestion = request.form['gestion']
+        new_data = Data(rna_id=rna_id, rna_id_ex=rna_id_ex, gestion=gestion)
+        db.session.add(new_data)
+        db.session.commit()
+        return redirect(url_for('assos'))
+    return render_template('ajouter.html')
 
-@app.route('/dashboard')
-def dashboard():
-    datas = Data.query.all()
+@app.route('/modifier/<int:data_id>', methods=['GET', 'POST'])
+def modifier(data_id):
+    data = Data.query.get(data_id)
 
-    # Préparer les données pour le graphique Chart.js
-    gestion_count = {}
-    for d in datas:
-        if d.gestion in gestion_count:
-            gestion_count[d.gestion] += 1
-        else:
-            gestion_count[d.gestion] = 1
-
-    gestion_values = list(gestion_count.values())
-    gestion_labels = list(gestion_count.keys())
-    data = {
-        'values': gestion_values,
-        'labels': gestion_labels
-    }
-    return render_template('dashboard.html', graph_data=json.dumps(data))
-
+    if request.method == 'POST':
+        data.rna_id = request.form['rna_id']
+        data.rna_id_ex = request.form['rna_id_ex']
+        data.gestion = request.form['gestion']
+        db.session.commit()
+        return redirect(url_for('assos'))
+    return render_template('modifier.html', data=data)
 
 
 @app.route('/hello')
